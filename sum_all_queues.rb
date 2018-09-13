@@ -16,10 +16,14 @@ client.list_queues.each do |q|
     all_count += q.messages_ready.to_i if q.name.start_with?('all')
     send_count += q.messages_ready.to_i if q.name.start_with?('send')
 end
+puts '### STATS ###'
+
+puts "There are #{client.list_queues.size} queues"
 
 puts "Quarantine Count: #{quarantine_count}"
 puts "All Count: #{all_count}"
 puts "Send Count: #{send_count}"
+puts "-------------------------------------"
 puts "Total Count #{total_count}"
 
 
