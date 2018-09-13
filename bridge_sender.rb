@@ -4,7 +4,7 @@ require_relative './helpers/connection'
 include Setup
 
 def get_user_id
-   user_ids = (34000..34100).to_a
+   user_ids = (34000..35000).to_a
    user_ids[rand(user_ids.count)]
 end
 
@@ -25,9 +25,11 @@ queue = channel.queue('all', durable: true)
 exit_requested = false
 Kernel.trap( "INT" ) { exit_requested = true }
 users = {}
+total_number_of_emails = 500000
 
-
-while !exit_requested
+while !exit_requested && total_number_of_emails > 1
+  total_number_of_emails -= 1
+  puts "Remaining: #{total_number_of_emails}" if total_number_of_emails % 10000 == 0
   current_user_id = get_user_id
   users[current_user_id] ||= {count: 0 ,content: get_message}
   users[current_user_id][:count] += 1
@@ -36,8 +38,7 @@ while !exit_requested
   message_id = "#{current_user_id}:#{count}"
   queue.publish(content, persistent: true, message_id: message_id)
 
-  puts " [x] Sent ID: #{message_id} '" + content + "'"
-  sleep 0.1
+  #puts " [x] Sent ID: #{message_id} '" + content + "'"
 end
 print "Exit was requested by user\n"
 
