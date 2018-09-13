@@ -9,8 +9,10 @@ def get_user_id
 end
 
 def get_message
-  messages = %w(hola hello bonjour Hallo Sveiki)
-  messages[rand(messages.count)]
+  content ||= "0" * 102400
+  messages ||= %w(hola hello bonjour Hallo Sveiki)
+  large_messages = messages.map {|m| m + content }
+  large_messages[rand(messages.count)]
 end  
 
 connection = make_connection
@@ -25,7 +27,7 @@ queue = channel.queue('all', durable: true)
 exit_requested = false
 Kernel.trap( "INT" ) { exit_requested = true }
 users = {}
-total_number_of_emails = 500000
+total_number_of_emails = 50#0000
 
 while !exit_requested && total_number_of_emails > 1
   total_number_of_emails -= 1
